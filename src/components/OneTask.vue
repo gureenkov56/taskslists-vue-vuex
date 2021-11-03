@@ -1,7 +1,26 @@
 <template lang="html">
   <div class="card position-absolute top-50 start-50 translate-middle w-50">
     <div class="card-body">
-      <h5 class="card-title">Card title</h5>
+      <h5 class="card-title">{{ taskArray[idxForCorrect].name }}</h5>
+
+      <div class="input-group mb-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Введите текст"
+          aria-label="Recipient's username"
+          aria-describedby="button-addon2"
+          v-model='newStep'
+        />
+        <button
+          class="btn btn-outline-secondary"
+          type="button"
+          id="button-addon2"
+          @click='addNewStep()'
+        >
+          Добавить
+        </button>
+      </div>
 
       <ul>
         <li v-for="(step, idx) in taskArray[idxForCorrect].step" :key="idx">
@@ -35,40 +54,51 @@ import { mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "OneTask",
-  data(){
+  data() {
     return {
       model: [],
-    }
+      newStep: '',
+    };
   },
   computed: {
     ...mapGetters(["idxForCorrect"]),
     taskArray: function () {
       return this.$store.state.tasks;
     },
-    getDoneStep: function(){
+    getDoneStep: function () {
       let res = [];
-      for(let idx in this.taskArray[this.idxForCorrect].step){
-        if(this.taskArray[this.idxForCorrect].step[idx].done){
+      for (let idx in this.taskArray[this.idxForCorrect].step) {
+        if (this.taskArray[this.idxForCorrect].step[idx].done) {
           res.push(idx);
         }
       }
       return res;
-    }
-  },
-  methods: {
-    ...mapMutations(["setIdxForCorrect", 'refreshDoneStatus']),
-    closeCorrectingWindow() {
-      let payload = {idxForCorrect: this.idxForCorrect, doneStepIdxArray: this.model};
-      // this.refreshDoneStatus(payload);
-      this.$store.commit('refreshDoneStatus', payload);
-
-      this.setIdxForCorrect(null);
-
     },
   },
-  mounted(){
+  methods: {
+    ...mapMutations(["setIdxForCorrect", "refreshDoneStatus"]),
+    closeCorrectingWindow() {
+      let payload = {
+        idxForCorrect: this.idxForCorrect,
+        doneStepIdxArray: this.model,
+      };
+      // this.refreshDoneStatus(payload);
+      this.$store.commit("refreshDoneStatus", payload);
+
+      this.setIdxForCorrect(null);
+    },
+    addNewStep(){
+      let payload = {
+        taskIdx: this.idxForCorrect,
+        newStep: this.newStep
+      }
+      this.$store.commit('addNewStep', payload);
+      this.newStep = '';
+    }
+  },
+  mounted() {
     this.model = this.getDoneStep;
-  }
+  },
 };
 </script>
 

@@ -1,4 +1,6 @@
 import { createStore } from "vuex";
+import createPersistedState from "vuex-persistedstate";
+
 
 const store = createStore({
   state() {
@@ -64,12 +66,18 @@ const store = createStore({
         state.tasks[idxForCorrect].step[indx].done = true;
       }
     },
+    addNewStep(state, payload) {
+      let taskIdx = payload.taskIdx;
+      let newStep = payload.newStep;
+      state.tasks[taskIdx].step.push({ text: newStep, done: false });
+    },
   },
   getters: {
     idxForCorrect(state) {
       return state.idxOfTaskForCorrect;
     },
   },
+  plugins: [createPersistedState()],
 });
 
 export default store;
