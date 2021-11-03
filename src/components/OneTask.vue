@@ -5,11 +5,12 @@
 
       <ul>
         <li v-for="(step, idx) in taskArray[idxForCorrect].step" :key="idx">
-          <label v-if="!step.done">
-            <input 
-              type="checkbox" 
-              :id="'chbx' + idx" 
-              
+          <label>
+            <input
+              type="checkbox"
+              :id="'chbx' + idx"
+              :value="idx"
+              v-model="model"
             />
             {{ step.text }}
           </label>
@@ -17,20 +18,6 @@
       </ul>
 
       <hr />
-
-      <ul>
-        <li v-for="(step, idx) in taskArray[idxForCorrect].step" :key="idx">
-          <label v-if="step.done" class="doneList">
-            <input
-              type="checkbox"
-              :id="'chbx' + idx"
-              checked
-              
-            />
-            {{ step.text }}
-          </label>
-        </li>
-      </ul>
 
       <button
         type="button"
@@ -48,18 +35,40 @@ import { mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "OneTask",
+  data(){
+    return {
+      model: [],
+    }
+  },
   computed: {
     ...mapGetters(["idxForCorrect"]),
     taskArray: function () {
       return this.$store.state.tasks;
     },
+    getDoneStep: function(){
+      let res = [];
+      for(let idx in this.taskArray[this.idxForCorrect].step){
+        if(this.taskArray[this.idxForCorrect].step[idx].done){
+          res.push(idx);
+        }
+      }
+      return res;
+    }
   },
   methods: {
-    ...mapMutations(["setIdxForCorrect", "togglerForStepDone"]),
+    ...mapMutations(["setIdxForCorrect", 'refreshDoneStatus']),
     closeCorrectingWindow() {
+      let payload = {idxForCorrect: this.idxForCorrect, doneStepIdxArray: this.model};
+      // this.refreshDoneStatus(payload);
+      this.$store.commit('refreshDoneStatus', payload);
+
       this.setIdxForCorrect(null);
+
     },
   },
+  mounted(){
+    this.model = this.getDoneStep;
+  }
 };
 </script>
 

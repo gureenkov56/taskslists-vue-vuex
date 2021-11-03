@@ -22,19 +22,19 @@ const store = createStore({
           ],
         },
         {
-          name: "Починить авто",
+          name: "Купить продукты",
           step: [
             {
-              text: "Позвонить автомеханику",
+              text: "Картошка",
               done: false,
             },
             {
-              text: "Купить запчасть",
-              done: false,
+              text: "Хлеб",
+              done: true,
             },
             {
-              text: "Забрать авто с сервиса",
-              done: false,
+              text: "Молоко",
+              done: true,
             },
           ],
         },
@@ -44,19 +44,32 @@ const store = createStore({
   },
   mutations: {
     removeOneTask(state, idx) {
-      state.tasks.splice(idx, 1)
-      console.log(idx)
+      state.tasks.splice(idx, 1);
+      console.log(idx);
     },
-    setIdxForCorrect(state, newIdx){
+    setIdxForCorrect(state, newIdx) {
       state.idxOfTaskForCorrect = newIdx;
     },
-    
+    refreshDoneStatus(state, payload) {
+      let idxForCorrect = payload.idxForCorrect;
+      let doneStepIdxArray = payload.doneStepIdxArray;
+
+      // сначала всем проставить false
+      for (let idxStep in state.tasks[idxForCorrect].step) {
+        state.tasks[idxForCorrect].step[idxStep].done = false;
+      }
+      // затем отмеченным проставить true
+      for (let idx in doneStepIdxArray) {
+        let indx = doneStepIdxArray[idx];
+        state.tasks[idxForCorrect].step[indx].done = true;
+      }
+    },
   },
   getters: {
-    idxForCorrect(state){
+    idxForCorrect(state) {
       return state.idxOfTaskForCorrect;
-    }
-  }
+    },
+  },
 });
 
 export default store;
