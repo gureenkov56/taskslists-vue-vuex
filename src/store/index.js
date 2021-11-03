@@ -39,6 +39,7 @@ const store = createStore({
           ],
         },
       ],
+      idxOfTaskForCorrect: null,
     };
   },
   mutations: {
@@ -46,7 +47,16 @@ const store = createStore({
       state.tasks.splice(idx, 1)
       console.log(idx)
     },
+    setIdxForCorrect(state, newIdx){
+      state.idxOfTaskForCorrect = newIdx;
+    },
+    
   },
+  getters: {
+    idxForCorrect(state){
+      return state.idxOfTaskForCorrect;
+    }
+  }
 });
 
 export default store;

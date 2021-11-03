@@ -29,7 +29,11 @@
             >
               Удалить
             </button>
-            <button type="button" class="btn btn-outline-primary">
+            <button 
+              type="button" 
+              class="btn btn-outline-primary"
+              @click='showCorrecting(idx)'
+            >
               Посмотреть
             </button>
           </div>
@@ -63,7 +67,13 @@
             >
               Отмена
             </button>
-            <button type="button" class="btn btn-primary" @click='removeTask()'>Да, удалить</button>
+            <button 
+              type="button" 
+              class="btn btn-primary" 
+              @click='removeTask()'
+            >
+              Да, удалить
+            </button>
           </div>
         </div>
       </div>
@@ -89,11 +99,17 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["removeOneTask"]),
+    ...mapMutations([
+      "removeOneTask",
+      "setIdxForCorrect"
+    ]),
     removeTask(){
       this.removeOneTask(this.idxForRemove);
       this.idxForRemove = null;
       this.isShowModal = false;
+    },
+    showCorrecting(idx){
+      this.setIdxForCorrect(idx);
     },
     showModal: function(idx){
       this.isShowModal = !this.isShowModal;
@@ -122,8 +138,5 @@ export default {
 </script>
 
 <style lang="css">
-.doneList {
-  text-decoration: line-through;
-  color: grey;
-}
+
 </style>
