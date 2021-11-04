@@ -10,13 +10,13 @@
           placeholder="Введите текст"
           aria-label="Recipient's username"
           aria-describedby="button-addon2"
-          v-model='newStep'
+          v-model="newStep"
         />
         <button
           class="btn btn-outline-secondary"
           type="button"
           id="button-addon2"
-          @click='addNewStep()'
+          @click="addNewStep()"
         >
           Добавить
         </button>
@@ -37,14 +37,22 @@
       </ul>
 
       <hr />
-
-      <button
-        type="button"
-        class="btn btn-primary"
-        @click="closeCorrectingWindow()"
-      >
-        OK
-      </button>
+      <div class="d-flex justify-content-between">
+        <button
+          type="button"
+          class="btn btn-primary"
+          @click="closeCorrectingWindow()"
+        >
+          OK
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-outline-success"
+          @click='markAsDone(idxForCorrect)'
+        >
+        Выполнено
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -57,7 +65,7 @@ export default {
   data() {
     return {
       model: [],
-      newStep: '',
+      newStep: "",
     };
   },
   computed: {
@@ -76,7 +84,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["setIdxForCorrect", "refreshDoneStatus"]),
+    ...mapMutations(["setIdxForCorrect", "refreshDoneStatus", 'totalDoneTask']),
     closeCorrectingWindow() {
       let payload = {
         idxForCorrect: this.idxForCorrect,
@@ -87,13 +95,21 @@ export default {
 
       this.setIdxForCorrect(null);
     },
-    addNewStep(){
+    addNewStep() {
       let payload = {
         taskIdx: this.idxForCorrect,
-        newStep: this.newStep
+        newStep: this.newStep,
+      };
+      this.$store.commit("addNewStep", payload);
+      this.newStep = "";
+    },
+    markAsDone(){
+      this.totalDoneTask(this.idxForCorrect);
+      this.model.splice(0, this.model.length);
+      for(let a = 0; a < this.taskArray[this.idxForCorrect].step.length; a++){
+        this.model.push(a);
       }
-      this.$store.commit('addNewStep', payload);
-      this.newStep = '';
+      this.closeCorrectingWindow()
     }
   },
   mounted() {

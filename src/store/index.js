@@ -8,6 +8,7 @@ const store = createStore({
       tasks: [
         {
           name: "Починить авто",
+          fullDone: false,
           step: [
             {
               text: "Позвонить автомеханику",
@@ -25,6 +26,7 @@ const store = createStore({
         },
         {
           name: "Купить продукты",
+          fullDone: false,
           step: [
             {
               text: "Картошка",
@@ -42,12 +44,12 @@ const store = createStore({
         },
       ],
       idxOfTaskForCorrect: null,
+      isShowNewListCreator: false,
     };
   },
   mutations: {
     removeOneTask(state, idx) {
       state.tasks.splice(idx, 1);
-      console.log(idx);
     },
     setIdxForCorrect(state, newIdx) {
       state.idxOfTaskForCorrect = newIdx;
@@ -71,13 +73,30 @@ const store = createStore({
       let newStep = payload.newStep;
       state.tasks[taskIdx].step.push({ text: newStep, done: false });
     },
+    addNewList(state, name) {
+      state.tasks.push({ name, fullDone: false, step: [] });
+      state.isShowNewListCreator = false;
+    },
+    toggleShowNewListCreator(state) {
+      state.isShowNewListCreator = !state.isShowNewListCreator;
+    },
+    totalDoneTask(state, idxTask) {
+      state.tasks[idxTask].fullDone = true;
+      for (let idxStep in state.tasks[idxTask].step) {
+        state.tasks[idxTask].step[idxStep].done = true;
+      }
+    },
   },
   getters: {
     idxForCorrect(state) {
       return state.idxOfTaskForCorrect;
     },
   },
-  plugins: [createPersistedState()],
+  plugins: [
+    createPersistedState({
+      storage: window.sessionStorage,
+    }),
+  ],
 });
 
 export default store;
